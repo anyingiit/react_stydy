@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2_对prop进行限制</title>
+    <style>
+    </style>
+</head>
+<body>
+
+<div id="test1"></div>
+<div id="test2"></div>
+<div id="test3"></div>
+
+<!--  引入react核心库-->
+<script src="../js/react.development.js"></script>
+<!--  引入react-dom, 用于支持react操作DOM-->
+<script src="../js/react-dom.development.js"></script>
+<!--  引入babel, 用于将jsx转为js-->
+<script src="../js/babel.min.js"></script>
+<!--引入prop-types, 用于对组件标签属性进行限制-->
+<script src="../js/prop-types.js"></script>
+
+<script type="text/babel">
+  //创建组件
+  class Person extends React.Component {
+    render() {
+      let {name, age, sex} = this.props
+      //props是只读的
+      // this.props.name = 'jack' //此行代码会报错, 因为props是只读的
+      return (
+        <ul>
+          <li>姓名: {name}</li>
+          <li>年龄: {age + 1}</li>
+          <li>性别: {sex}</li>
+        </ul>
+      )
+    }
+  }
+
+  //对标签属性进行类型, 必要性的限制
+  Person.propTypes = {
+    // 主语这里的PropTypes, 这引入的库的全局变量, 和上方的`propTypes`没啥关系, 上方的`propTypes`是react要求的, 如果想要对标签属性进行限制, 必须赋值给组件静态属性propType一个对象, 对象内是key value的方式, key是标签属性名, value是为其限制的类型
+    name: PropTypes.string.isRequired,// 限制name必传, 且为字符串
+    age: PropTypes.number,// 限制age为数值
+    sex: PropTypes.string,// 限制sex为字符串
+    speak: PropTypes.func// 限制speak为函数
+  }
+  //指定默认标签属性
+  Person.defaultProps = {
+    age: 19,// sex的默认值是19
+    sex: '男'// sex的默认值为男
+  }
+
+
+  //渲染组件到页面
+  ReactDOM.render(<Person name='tom' speak={speak}/>, document.getElementById('test1'))
+  ReactDOM.render(<Person name='marry' age={21} sex='男'/>, document.getElementById('test2'))
+
+  const p = {name: '老刘', age: 18, sex: '女'}
+  // console.log('@', ...p)
+  // react+babel的扩展语法 - 标签属性的批量传递语法
+  ReactDOM.render(<Person {...p}/>, document.getElementById('test3'))
+
+  function speak() {
+    console.log('我说话了')
+  }
+</script>
+</body>
+</html>

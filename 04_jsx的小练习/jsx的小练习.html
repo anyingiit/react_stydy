@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>jsx的小练习</title>
+</head>
+<body>
+
+  <div id="test"></div>
+
+  <script src="../js/react.development.js"></script>
+  <script src="../js/react-dom.development.js"></script>
+  <script src="../js/babel.min.js"></script>
+
+  <script type="text/babel">
+    /*
+      一定注意区分: 【js语句（代码）】与【js表达式】
+        1. 表达式: 一个表达式会产生一个值, 可以放在任意一个需要值的地方
+                下面这些都是表达式: 他们的特点就是合法使用都可以能用变量解到值
+                    (1). a
+                    (2). a+b
+                    (3). demo(1)
+                    (4). arr.map()  // 该函数可以加工数组, 向其传入一个函数, 当遍历到每一个值的时候都会调用该函数, 并且传入参数为当前遍历元素的值, index等, 该函数可以返回一个值, 该值是被加工好的值, 最终arr.map()会返回被加工好的数组
+                    (5). function test() {}
+        2. 语句(代码):
+                下面这些都是语句(代码):
+                    (1).if(){}
+                    (2).for(){}
+                    (3).switch(){case:xxx}
+    */
+    const data = ['Angular', 'React', 'Vue']
+    const VDOM = (
+      <div>
+        <h2>前端js框架列表</h2>
+        <ul>
+          {// 如果给定一个数组, react其实是会自动遍历, 但是如果给定一个对象, 则会报错
+            // 遍历出来的虚拟DOM必须存在一个key, 该key是为了帮助react区分不同标签用的, 现在可以显示用数组的index, 但是这不是一个稳妥的写法, 后面会说明正确的写法
+            data.map((value, index) => {//拿到数组中的每一个元素, 并且返回加工完成后的新值, 最终data.map()会返回包含每个被加工完成的新数组
+              return <li key={index}>{value}</li>
+            })
+          }
+        </ul>
+      </div>
+    )
+    ReactDOM.render(VDOM, document.getElementById('test'))
+  </script>
+</body>
+</html>

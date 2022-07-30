@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>2_回调形式的ref</title>
+</head>
+<body>
+
+<div id="test"></div>
+
+<script src="../js/react.development.js"></script>
+<script src="../js/react-dom.development.js"></script>
+<script src="../js/babel.min.js"></script>
+<script src="../js/prop-types.js"></script>
+
+<script type="text/babel">
+  // 创建组件
+  class Demo extends React.Component {
+    /*
+    * 关于ref传入的两种方式
+    *   1. 传入存在于实例对象上的方法
+    *       该函数会在第一次渲染页面时调用一次 并为其传入参数为该虚拟节点的真实DOM, 当卸载时会调用一次 并为其传入null
+    *   2. 传入内联函数
+    *       会在第一次渲染页面时调用一次 并为其传入参数为该虚拟节点的真实DOM, 然后会在每次渲染页面时调用两次, 第一次传入null 第二次传入该虚拟节点的真实DOM, 其次会在卸载时会调用一次 并为其传入null
+    *           为什么会每次渲染调用两次?  因为render方法重新执行的时候，这个input标签这一行是不是也要被重新执行？然后程序又发现你这个标签里面有一个回调式的refs，是不是又要来执行这个函数？但是这个函数已经是一个新函数了，之前的那个函数已经执行完成了，那一块内存就自动释放了。所以这里是一个全新的回调函数。但是程序并没法确定之前那次回调函数都接到了什么。虽然我们都知道上一次函数接到的是当前所在的DOM节点，但是程序是不知道的，不然市场上也不会有那么多我们所谓的人工智障了。正是这个原因。所以程序必须要保证上一次这个回调函数的结果被清空，所以才会先调一次这个回调函数并且传入null来确保上次的结果清空了，然后再调一次这个回调函数来传入当前所在节点。
+    * */
+    render() {
+      return (
+        <div>
+          {/* 该种方式就会稍微麻烦一点 */}
+          <input ref={(currentNode) => {
+            console.log(this)//匿名函数没有自己的this, 所以在定义时会在其的外侧寻找this, 而我们的jsx是在render中返回的, 所以其外侧就是render, 而又由于render是由react调用的, 所以其this是实例对象, 所以我们在匿名函数中获取的this就是实例对象
+            this.input1 = currentNode// 由于这里的this就是实例对象, 所以对其属性进行赋值就是给实例对象的属性赋值, 所以我们就是将名为input1, 值为当前虚拟DOM节点的真实DOM节点赋值给了实例对象, 即实例对象属性, 所以我么能直接在实例对象中看到属性`input1`
+          }} type="text" placeholder="点击按钮提示数据"/>
+          <button onClick={this.showData1}>点我提示左侧的数据</button>
+          {/* 同理, 见上方, 不过使用了ES6语法中的简写 */}
+          <input ref={c => this.input2 = c} onBlur={this.showData2} type="text" placeholder="失去焦点提示数据"/>
+        </div>
+      )
+    }
+
+    // 展示左侧输入框的数据
+    showData1 = () => {
+      const {input1} = this
+      alert(input1.value)
+    }
+    // 展示右侧输入框的数据
+    showData2 = () => {
+      const {input2} = this
+      alert(input2.value)
+    }
+  }
+
+  ReactDOM.render(<Demo/>, document.getElementById('test'))
+</script>
+</body>
+</html>

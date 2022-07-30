@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2_state的简写方式</title>
+    <style>
+    </style>
+</head>
+<body>
+
+<div id="test"></div>
+
+<script src="../js/react.development.js"></script>
+<script src="../js/react-dom.development.js"></script>
+<script src="../js/babel.min.js"></script>
+
+<script type="text/babel">
+  //1.创建类式组件
+  class Weather extends React.Component {
+    // 给实例对象追加一个属性, 该属性名为state, 值为对象 其内容为...
+    // 初始化状态
+    state = {isHot: false, wind: '微风'}
+
+
+    render() {
+      // console.log(this)
+      const {isHot, wind} = this.state
+      return <h2 onClick={this.changeWeather}>今天天气很{isHot ? '炎热' : '凉爽'}, {wind}</h2>
+    }
+
+    // 给实例对象追加一个属性, 改属性名为changeWeather, 值为一个匿名函数(该匿名函数的创建方式一定要是箭头函数, 一定不能是function(){})
+    // 为什么值一定要是箭头函数, 而不能是function(){} ?
+    // 我们先来看看function中this的特性
+    //      其特性为, this的值是动态的, 其值只有被调用时确定, 确定为this就是调用者
+    // 我们再来看看箭头函数的特性
+    //      其特性为, 箭头函数没有this, 如果使用this, 那么这个this一定是箭头函数外面的this
+    //          为什么会这样? 我们可以把this的调用比作变量, 当我们调用函数内部不存在的变量, 并且外部存在该变量时, 就会自动调用外部的变量. 而对于调用this也一样, 箭头函数内部不存在this, 所以当然就会从外部寻找this, 就像调用不存在的变量那样
+    //      而在class中, 是存在this的, 这个this就是类的实例对象, 所以这里调用的this就是类的实例对象
+    //      所以对于这个函数来说, this是一个确定的值, 这个值就是该类的实例对象, 这也就解释了为什么在render中将this.changeWeather赋值给onClick, 其在执行回调函数时, 该函数能够正确的获取this, 因为这个this以及提前被确定了嘛, 确定为该类的实例对象
+    //
+    // 解决了为什么将使用箭头函数属性的实例属性赋值给onClick, 并且onClick在执行回调时函数内部能够正确的获取this的问题, 我们再来看看相同的环境为什么这里不呢用function(){}
+    //      其实对于function(){}内部的this严格来书不是动态的, 我们理解的动态是, 在执行的瞬间为其赋值一个名为this 值为调用者的属性
+    //      但是实际上在function(){}定义时就有一个名为this, 但是值为空的属性, 只不过是在调用的瞬间将this的值设置为调用者而已
+    //      这也就解释了为什么function(){}不会自动访问外部的this, 毕竟人家已经有自己的this了呀!!
+    //      --- 所以说我们就破案了啊, 因为在定义时function(){}有自己的this, 导致onClick在执行回调的时候其会访问自己的this, 而这个this由被赋值为调用者
+    //          按理说onClick是直接调用的, 所以直接调用其this应该会被自动指向window, 但是好巧不巧, 所有class默认情况下开启了严格模式, 而严格模式禁止了动态绑定, 将所有动态绑定赋值为undefined, 所以其回调函数内部的this就是undefined
+    //自定义方法 -- 要用赋值语句的形式+箭头函数
+    changeWeather = () => {
+      const isHot = this.state.isHot
+      this.setState({isHot: !isHot})
+    }
+  }
+
+  ReactDOM.render(<Weather/>, document.getElementById('test'))
+</script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>1_使用函数实现继承.html</title>
+</head>
+<body>
+<script type="text/javascript">
+    function Person(name, age) {
+        this.name = name
+        this.age = age
+    }
+
+    Person.prototype.speak = function () {
+        console.log('我是' + this.name + ', 我今年' + this.age + '岁了')
+    }
+
+    function Student(name, age, studentId) {
+        this.name = name
+        this.age = age
+        this.studentId = studentId
+    }
+
+    // 正常来说, 我们的Student的原型是一个空对象, 该空对象的原型是Object
+    // 我们期望的是Student的原型依然是一个空对象, 但是该对象的原型指向Student
+    // 这样我们在Student定义自己的方法就不会影响到Student的方法, 因为我们是在自己的空原型中写方法, 只有当找不到方法时才会依照JavaScript的原型链规则去寻找到Student方法, 再找不到就是找不到了
+
+    // 而new Person()恰好会生成一个空对象, 我们让我们的Student指向这个空对象, 恰好就完成了我们第一个要求(Student的原型是一个空对象), 而第二个要求也恰好的完成了, 因为这个空对象的原型就是Person的原型, 而我们的要求就是Student的空对象的原型就是Person, 至此完成了JavaScript中使用原型继承的操作
+
+    Student.prototype = Object.create(Person) // 将Student原型指向一个新的Person对象, 实际上就是完成了继承, 因为方法和属性如果在Student没有就会从原型链查找, 如果我们想要调用Person类的方法, 那么第一次查找就能发现想找的方法并调用
+    Student.prototype.speak = function () {
+        console.log('我是' + this.name + ', 我今年' + this.age + '岁了, 我的学号是' + this.studentId)
+    }
+
+    function Teacher() {
+    }
+
+    // 关于原型
+    //     1. prototype是构造函数的属性，指向属于该构造函数的原型对象
+    //     2.  __proto__是任何对象的属性，指向该对象的构造函数的原型对象
+    //
+    //     prototype和__proto__之间的唯一区别就在于前者是构造函数的属性，而后者是对象的属性。
+    //
+    //     > In reality, the only __true__ difference between prototype and __proto__ is that the former is a property of a class constructor, while the latter is a property of a class instance.
+    //
+    //     关于prototype与__proto__容易让人疑惑的点是，构造函数也有__proto__属性。之所以会这样，是因为构造函数也是一个对象，它是构造函数Function()的实例对象。因此，所有构造函数的__proto__属性都指向Function构造函数的原型对象。
+    //     同时，原型对象是特殊的对象，每个构造函数的原型对象都会有一个__proto__属性，共同指向构造函数Object()的原型对象。构造函数Object()的原型对象，作为除自身以外被所有原型对象指向的对象，其担当着根节点的角色，它的__proto__属性指向null。
+
+</script>
+</body>
+</html>

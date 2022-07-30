@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>4_createRef</title>
+</head>
+<body>
+
+<div id="test"></div>
+
+<script src="../js/react.development.js"></script>
+<script src="../js/react-dom.development.js"></script>
+<script src="../js/babel.min.js"></script>
+<script src="../js/prop-types.js"></script>
+
+<script type="text/babel">
+  // 创建组件
+  class Demo extends React.Component {
+    /*
+    * 目前react推荐写法
+    * React.createRef调用后可以返回一个容器, 该容器可以存储被ref所表示的节点, 该容器是"专人专用的", 即只能存一个真实DOM
+    * */
+    myRef = React.createRef()
+    myRef2 = React.createRef()
+
+    render() {
+      return (
+        <div>
+          {/* ref过程: 当发现ref传递的是React.createRef()创建的容器后, 就会将当前节点的真实DOM存入这个容器中 */}
+          <input ref={this.myRef}/>
+          <button onClick={this.showData}>点我提示输入的数据</button>
+          <br/><br/>
+          <input onBlur={this.showData2} ref={this.myRef2} placeholder="失去焦点提示数据"/>
+
+        </div>
+      )
+    }
+
+    showData = () => {
+      // myRef是容器, 其存入名为current 值为真实DOM节点
+      alert(this.myRef.current.value)
+    }
+
+    showData2 = () => {
+      alert(this.myRef.current.value)
+    }
+
+  }
+
+  ReactDOM.render(<Demo/>, document.getElementById('test'))
+</script>
+</body>
+</html>

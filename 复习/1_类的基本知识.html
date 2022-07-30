@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>1_类的基本知识</title>
+</head>
+<body>
+<script type="text/javascript">
+  /*
+  * 总结:
+  *     1. 类中的构造器, 要对实例进行一些初始化的操作, 如添加指定属性时才写
+  *     2. 如果A类继承与B类, A类中写了构造器方法, 那么A类构造器中的super方法是必要调用的
+  *     3. 类中所定义的方法, 都是放在的类的原型对象上, 供实例去调用
+  */
+
+  // 创建一个Person类
+  class Person {
+    //构造器方法
+    constructor(name, age) {
+      this.name = name
+      this.age = age
+    }
+
+    //一般方法
+    speck() {
+      //speck方法放在了哪里? -- 放在了Person类的原型对象上, 供实例对象使用
+      //通过Person实例调用speck时, speck中的this就是Person的实例
+      console.log(`我是${this.name}, 我今年${this.age}岁了`)
+    }
+  }
+
+  //创建一个Student类, 继承与Person类
+  class Student extends Person {
+    constructor(name, age, studentId) {
+      super(name, age)
+      this.studentId = studentId
+      this.school = "尚硅谷"
+    }
+
+    //重写从父类继承过来的方法
+    speck() {
+      console.log(`我是${this.name}, 我今年${this.age}岁了, 我的学号是${this.studentId}`)
+    }
+
+    //study方法放在了哪里? -- 放在了Student类的原型对象上, 供实例对象使用
+    //通过Student实例调用study时, study中的this就是Person的实例
+    study() {
+      console.log('我很努力的学习')
+    }
+
+  }
+
+  class Car {
+    constructor(name, price) {
+      this.name = name
+      this.price = price
+    }
+
+    //类中可以直接写赋值语句, 如下代码的含义是给Car的实例对象添加一个属性, 名为a, 值为1
+    a = 1
+    weel = 4
+
+    static demo = 100
+  }
+
+  // Car.demo = 100 // 等同于在类内部写 static demo = 100 就是给类添加一个静态属性(注意 不是给示例对象 而是给类)
+  console.log(Car.demo)
+
+  let c1 = new Car('奔驰', 199)
+  let c2 = new Car('宝马', 299)
+
+  console.log(c1)
+  console.log(c2)
+
+
+  class Test {
+    changeWeather = function () {
+      console.log(this)
+    }
+  }
+
+  const t1 = new Test()
+  const x = t1.changeWeather
+  x()
+
+</script>
+</body>
+</html>

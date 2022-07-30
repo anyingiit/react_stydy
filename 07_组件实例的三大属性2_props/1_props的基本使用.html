@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2_state的简写方式</title>
+    <style>
+    </style>
+</head>
+<body>
+
+<div id="test1"></div>
+<div id="test2"></div>
+<div id="test3"></div>
+
+<script src="../js/react.development.js"></script>
+<script src="../js/react-dom.development.js"></script>
+<script src="../js/babel.min.js"></script>
+
+<script type="text/babel">
+  //1.创建组件
+  class Person extends React.Component {
+    render() {
+      let {name, age, sex} = this.props
+      return (
+        <ul>
+          <li>姓名: {name}</li>
+          <li>年龄: {age + 1}</li>
+          <li>性别: {sex}</li>
+        </ul>
+      )
+    }
+  }
+
+  //渲染组件到页面
+  ReactDOM.render(<Person name='tom' age='18' sex='女'/>, document.getElementById('test1'))// 向标签传递标签属性 名name, 值tom  名age, 值18  名sex, 值女
+  ReactDOM.render(<Person name='marry' age='21' sex='男'/>, document.getElementById('test2'))
+
+  const p = {name: '老刘', age: 18, sex: '女'}
+  console.log('@', ...p)
+  // react+babel的扩展语法 - 标签属性的批量传递语法
+  ReactDOM.render(<Person {...p}/>, document.getElementById('test3'))// 注意观察`{...p}`, 这个和ES语法中的`{...p}`不是一个东西! ES语法中`{...p}`是一个规定的写法, 意思是`构造字面量对象时使用展开语法`. 而在标签中`{}`是一个标识符, 标签里面是一个表达式, 即`{}`的作用只是标识花括号内部是表达式, 而不参与运算, 即`{}`是一部分, `...p`是一部分 所以在这里实际执行的语句就是`...p` 而这种写法在原生JS中是不存在的, 原生JS中可以展开数组, 但是不能展开对象, 而在这里`...p`就可以展开对象, 这是怎么回事呢? 这是因为当我们使用react + babel时, 会增加一些专属的扩展语法, 而`...p`就是一种扩展语法, 使其可以展开对象, 但是注意, 就算我们可以展开对象, 这个对象也不是在哪里都可以展开了, 见上一行, 直接打印`...p`是没有结果的, 所以注意, 这个语法能且只能用于`标签属性的传递`, 其仅仅能用在标签上, 用于传递props
+</script>
+</body>
+</html>
